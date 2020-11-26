@@ -1,9 +1,10 @@
 
-import type { Entry, EOCD } from './_deps.ts';
+import type { Entry, EOCD } from './types.ts';
+import { extract as extract_file } from './extract.ts';
 
 export async function getEntries(file: Deno.File) {
     const cdh_sign = 0x02014b50;
-    const { cd_o, cd_l } = await getEOCD(file);
+    const { cd_o, cd_l, entries_l } = await getEOCD(file);
     const mem = new Uint8Array(cd_l);
 
     const read = (o: number = 0) => {
@@ -24,8 +25,14 @@ export async function getEntries(file: Deno.File) {
         [Symbol.iterator]() {
             return {
                 next: () => {
-                    const sign = dv.getUint32(index, true);
-                    if (sign !== cdh_sign) return { value: { filename: '', index: entry_index }, done: true };
+                    if ( entry_index >= entries_l || dv.getUint32(index, true) !== cdh_sign){
+                        const value:Entry = {
+                            filename: '',
+                            index: entry_index,
+                            extract: () => Promise.resolve(new Uint8Array())
+                        }
+                        return { value, done: true };
+                    }
                     const v      = dv.getUint16(index + 4, true);
                     const v_min  = dv.getUint16(index + 6, true);
                     const gpbf   = dv.getUint16(index + 8, true);
@@ -43,9 +50,18 @@ export async function getEntries(file: Deno.File) {
                     const efa    = dv.getUint32(index + 38, true);
                     const lfh_o  = dv.getUint32(index + 42, true);
 
+                    const curr_index = index;
+                    const extract = async () => {
+                        file.seekSync(lfh_o,Deno.SeekMode.Start);
+                        const content = await extract_file(file);
+                        file.seekSync(cd_o,Deno.SeekMode.Start);
+                        return content;
+                    };
+
                     const value:Entry = {
                         filename:te.decode(mem.slice(index + 46, index + 46 + name_l)),
-                        index: entry_index += 1
+                        index: entry_index += 1,
+                        extract
                     }
                     index = index + 46 + name_l + exf_l + cmnt_l;
                     return { value, done: false };
@@ -56,10 +72,6 @@ export async function getEntries(file: Deno.File) {
 
     return entries;
 }
-
-export async function Extract(offset:number,c_size:number,u_size:number,is_compressed:boolean,file:Deno.File){
-
-} 
 
 async function getEOCD(file:Deno.File):Promise<EOCD>{
     // using naive approach;
@@ -102,6 +114,3 @@ async function getEOCD(file:Deno.File):Promise<EOCD>{
     }
     return parse(index);
 }
-
-const file = await Deno.open('catalog/[hentainexus][9015] More Hide & Seek.zip',{read:true});
-console.log(await getEOCD(file));

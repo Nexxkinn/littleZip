@@ -3,6 +3,9 @@
 - Single-directory, no-symlink
 - Lots of shortcuts and naive approachs
 - Optimised only for gallery compress and extract.
-- Only support zlib compression
+- Only support deflate compression
 - Prone to pathfile attack
 - Not yet audited. 
+
+### TODO
+- compression
