@@ -8,6 +8,22 @@ export type extract_args = {
     file:Deno.File
 }
 
+export type append_args = {
+    filename:string,
+    file:Deno.File,
+    zip:Deno.File,
+}
+
+export type close_args = {
+    lfh_entries:Array<lfh_entry>,
+    offset:number,
+    zip:Deno.File
+}
+export type lfh_entry = {
+    offset:number,
+    lfh:Uint8Array
+}
+
 export type EOCD = {
     sign:number,
     disk_l:number,

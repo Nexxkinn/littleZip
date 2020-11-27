@@ -1,13 +1,24 @@
-import { getEntries } from './entries.ts';
+import { join } from "https://deno.land/std@0.78.0/path/win32.ts";
+import { append, close } from './compress.ts';
+import { lfh_entry } from "./types.ts";
 
-const file = await Deno.open('test.zip');
+export { getEntries } from './entries.ts';
 
-for (const { filename, index, extract } of await getEntries(file)) {
-    //console.log({filename, index});
-    if(index == 100){ 
-        const file = Deno.createSync('test.jpg');
-        const content = await extract();
-        file.writeSync(content);
-        break;
+
+export async function compress(dir_path:string,target_path:string) {
+    // create file
+    const source = Deno.readDir(dir_path);
+    const target = await Deno.create(target_path);
+    const entries:lfh_entry[] = new Array();
+    let offset = 0;
+    for await( const entry of source ) {
+        const file = await Deno.open(join(dir_path,entry.name));
+        const {len, lfh} = await append({filename:entry.name,file,zip:target})
+        entries.push({offset,lfh});
+        offset += len;
     }
+
+    await close({lfh_entries:entries,offset,zip:target});
+    target.close();
+    return target;
 }

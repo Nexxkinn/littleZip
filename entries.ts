@@ -18,7 +18,6 @@ export async function getEntries(file: Deno.File) {
     const dv = new DataView(mem.buffer, 0, mem.byteLength);
 
     let index = 0;
-    let off = 0;
     let entry_index = 0;
 
     const entries = {
@@ -33,21 +32,21 @@ export async function getEntries(file: Deno.File) {
                         }
                         return { value, done: true };
                     }
-                    const v      = dv.getUint16(index + 4, true);
-                    const v_min  = dv.getUint16(index + 6, true);
-                    const gpbf   = dv.getUint16(index + 8, true);
-                    const cmprs  = dv.getUint16(index + 10, true);
-                    const m_time = dv.getUint16(index + 12, true);
-                    const m_date = dv.getUint16(index + 14, true);
-                    const crc32  = dv.getUint32(index + 16, true);
-                    const c_size = dv.getUint32(index + 20, true);
-                    const u_size = dv.getUint32(index + 24, true);
+                    // const v      = dv.getUint16(index + 4, true);
+                    // const v_min  = dv.getUint16(index + 6, true);
+                    // const gpbf   = dv.getUint16(index + 8, true);
+                    // const cmprs  = dv.getUint16(index + 10, true);
+                    // const m_time = dv.getUint16(index + 12, true);
+                    // const m_date = dv.getUint16(index + 14, true);
+                    // const crc32  = dv.getUint32(index + 16, true);
+                    // const c_size = dv.getUint32(index + 20, true);
+                    // const u_size = dv.getUint32(index + 24, true);
                     const name_l = dv.getUint16(index + 28, true);
                     const exf_l  = dv.getUint16(index + 30, true);
                     const cmnt_l = dv.getUint16(index + 32, true);
-                    const disk_i = dv.getUint16(index + 34, true);
-                    const ifa    = dv.getUint16(index + 36, true);
-                    const efa    = dv.getUint32(index + 38, true);
+                    // const disk_i = dv.getUint16(index + 34, true);
+                    // const ifa    = dv.getUint16(index + 36, true);
+                    // const efa    = dv.getUint32(index + 38, true);
                     const lfh_o  = dv.getUint32(index + 42, true);
 
                     const curr_index = index;
