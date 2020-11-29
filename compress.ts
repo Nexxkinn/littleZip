@@ -1,4 +1,4 @@
-import { append_args, close_args, lfh_entry } from "./types.ts";
+import { append_args, close_args, isDenoFile, lfh_entry } from "./types.ts";
 import { deflate } from "./_deps.ts";
 import { crc32 } from "./crc32.ts";
 
@@ -10,7 +10,8 @@ import { crc32 } from "./crc32.ts";
 export async function append(args:append_args):Promise<{len:number,lfh:Uint8Array}>{
     const { filename, file, zip } = args;
     const lfh = new Uint8Array(30+filename.length);
-    const content = await Deno.readAll(file);
+
+    const content = isDenoFile(file) ? await Deno.readAll(file) : file;
     const crc     = crc32(content);
     const c_content:Uint8Array = deflate(content,undefined);
 

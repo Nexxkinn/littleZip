@@ -10,8 +10,12 @@ export type extract_args = {
 
 export type append_args = {
     filename:string,
-    file:Deno.File,
+    file:Deno.File | Uint8Array,
     zip:Deno.File,
+}
+
+export function isDenoFile(file:any): file is Deno.File {
+    return Boolean(file.rid)
 }
 
 export type close_args = {

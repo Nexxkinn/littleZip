@@ -1,6 +1,6 @@
-import { getEntries, compress } from "./_mod.ts";
+import { getEntries, compress, create_zip } from "./_mod.ts";
 
-// extract, functional, but under development.
+//extraction. functional, but under development.
 const file = await Deno.open('test.zip');
 for (const { filename, index, extract } of await getEntries(file)) {
     if(index == 100){ 
@@ -11,5 +11,10 @@ for (const { filename, index, extract } of await getEntries(file)) {
     }
 }
 
-// compress
+// compression
 const zip = await compress('test/','result.zip');
+
+// increment file compression
+const test = await create_zip('test.zip');
+await test.push(new TextEncoder().encode('Hello World'),'hello.txt');
+await test.end();
