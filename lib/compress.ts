@@ -1,5 +1,5 @@
 import { append_args, close_args, isDenoFile, lfh_entry } from "./types.ts";
-import { deflate } from "./_deps.ts";
+import { deflate } from "../deps.ts";
 import { crc32 } from "./crc32.ts";
 
 /**

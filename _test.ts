@@ -1,4 +1,4 @@
-import { getEntries, compress, create_zip } from "./_mod.ts";
+import { getEntries, compress, create_zip } from "./mod.ts";
 
 //extraction. functional, but under development.
 const file = await Deno.open('test.zip');

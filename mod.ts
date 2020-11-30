@@ -1,9 +1,8 @@
-import { join } from "https://deno.land/std@0.78.0/path/win32.ts";
-import { append, close } from './compress.ts';
-import { lfh_entry } from "./types.ts";
+import { append, close } from './lib/compress.ts';
+import { lfh_entry } from "./lib/types.ts";
+import { join } from './deps.ts';
 
-export { getEntries } from './entries.ts';
-
+export { getEntries } from './lib/entries.ts';
 
 export async function compress(dir_path:string,target_path:string) {
     // create file
