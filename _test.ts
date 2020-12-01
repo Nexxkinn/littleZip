@@ -1,18 +1,17 @@
 import { getEntries, compress, create_zip } from "./mod.ts";
 
+// // compression
+const zip = await compress('test/','test.zip');
+
 //extraction. functional, but under development.
 const file = await Deno.open('test.zip');
-for (const { filename, index, extract } of await getEntries(file)) {
-    if(index == 100){ 
-        const file = Deno.createSync('test.jpg');
-        const content = await extract();
-        file.writeSync(content);
-        break;
-    }
-}
+await Deno.mkdir('result');
 
-// compression
-const zip = await compress('test/','result.zip');
+ for (const { filename, index, extract } of await getEntries(file)) {
+    const file = await Deno.create('result/'+filename);
+    const content = await extract();
+    file.writeSync(content);
+}
 
 // increment file compression
 const test = await create_zip('test.zip');

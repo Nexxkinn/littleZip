@@ -1,7 +1,7 @@
 ### Features
 - memory-friendly
 - deflate compression by default
-- use few depedencies ( denoflate and std/join )
+- use few depedencies ( pako and std/join )
 
 ### Usage
 ```ts

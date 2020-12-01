@@ -1,4 +1,4 @@
-import { inflate } from '../deps.ts';
+import { inflate } from './deflate/mod.ts';
 
 export async function extract(file:Deno.File) {
     const lfh_mem = new Uint8Array(30);
