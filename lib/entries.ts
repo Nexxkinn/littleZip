@@ -2,9 +2,9 @@
 import type { Entry, EOCD } from './types.ts';
 import { extract as extract_file } from './extract.ts';
 
-export async function getEntries(file: Deno.File) {
+export function getEntries(file: Deno.File) {
     const cdh_sign = 0x02014b50;
-    const { cd_o, cd_l, entries_l } = await getEOCD(file);
+    const { cd_o, cd_l, entries_l } = getEOCD(file);
     const mem = new Uint8Array(cd_l);
 
     const read = (o: number = 0) => {
@@ -72,7 +72,7 @@ export async function getEntries(file: Deno.File) {
     return entries;
 }
 
-async function getEOCD(file:Deno.File):Promise<EOCD>{
+function getEOCD(file:Deno.File):EOCD {
     // using naive approach;
     const eocd_sign = 0x06054b50;
     const mem  = new Uint8Array(65535);

@@ -1,3 +1,10 @@
+<h1 align="center">
+  <br>
+  <img src="icon.png" alt="littlezip">  
+  <br>
+  <b>littleZip</b>
+</h1>
+
 ### Features
 - memory-friendly
 - deflate compression by default
@@ -6,11 +13,12 @@
 ### Usage
 ```ts
 import { getEntries, compress, create_zip } from 'https://deno.land/x/littlezip/mod.ts'
+
 // extract single file, currently under development.
 const file = await Deno.open('test.zip');
-for (const { filename, index, extract } of await getEntries(file)) {
+for (const { filename, index, extract } of getEntries(file)) {
     if(index == 100){ // or filename === 'test.jpg'
-        const file = Deno.createSync('test.jpg');
+        const file = await Deno.create('test.jpg');
         const content = await extract();
         file.writeSync(content);
         break;
@@ -24,16 +32,14 @@ const zip = await compress('test/','result.zip');
 const zip = await create_zip('path/to/target.zip');
 await zip.push(buff1,'file.txt');
 await zip.push(buff2,'image.jpg');
-await zip.end()                     // required to call this method to close the package
+await zip.end()                     // call this at the end
 ```
 
 ### Limitation
 - No encryption support
-- Single-directory, file only.
-- Lots of shortcuts and naive approachs
-- Optimised only for gallery compression and single file extract.
-- Prone to pathfile attack (?)
-- Not yet audited. 
+- Optimised for simple use case
+- No Zip64 support
+
 
 ### TODO
 - [x] compression
