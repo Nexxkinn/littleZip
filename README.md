@@ -37,7 +37,7 @@ await zip.close()   // call this at the end
 // edit zip
 const zip = await open_zip('path/to/target.zip');
 console.log(zip.entries())               // ['test.txt']
-await zip.insert('filename.jpg', buff2); // push or replace item.
+await zip.insert(buff2,'filename.jpg'); // push or replace item.
 console.log(zip.entries())               // ['test.txt', 'filename.jpg']
 await zip.close(); // call this at the end
 ```
