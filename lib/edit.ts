@@ -19,10 +19,11 @@ export async function open_zip(path: string) {
     // analyse file
     const insert = async (file: Deno.File | Uint8Array, filename: string) => {
         const old_entry = lfh_entries.find(x => x.filename === filename);
+        const stat = await Deno.stat(path);
 
         if (old_entry) {
             const entry_offset = old_entry.offset + old_entry.entry_size;
-            const upper_data = new Uint8Array(target_stat.size-entry_offset);
+            const upper_data = new Uint8Array(stat.size-entry_offset);
             await target.seek(entry_offset,Deno.SeekMode.Start);
             await target.read(upper_data);
             await target.seek(old_entry.offset,Deno.SeekMode.Start);
@@ -37,7 +38,7 @@ export async function open_zip(path: string) {
             // recalibrate all offset above the current one.
             const index = lfh_entries.findIndex(x => x.offset === offset);
             lfh_entries[index] = new_entry;
-            lfh_entries.map(x => { if(entry_offset < x.offset) x.offset = x.offset + (len - old_entry.entry_size) });
+            lfh_entries.forEach(x => { if(entry_offset < x.offset) x.offset = x.offset + (len - old_entry.entry_size) });
             //console.log(len - old_entry.entry_size);
             offset = offset + (len - old_entry.entry_size);
         }
@@ -50,6 +51,23 @@ export async function open_zip(path: string) {
         }
     }
 
+    const remove = async (filename:string) => {
+        const entry_index = lfh_entries.findIndex( x => x.filename === filename);
+        if(entry_index === -1) return;
+        const stat = await Deno.stat(path);
+        const { offset: entry_offset, entry_size } = lfh_entries[entry_index];
+        const upper_offset = entry_offset + entry_size;
+        const upper_data = new Uint8Array(stat.size-upper_offset);
+        await target.seek(upper_offset,Deno.SeekMode.Start);
+        await target.read(upper_data);
+        await target.seek(entry_offset,Deno.SeekMode.Start);
+        await target.write(upper_data);
+        await Deno.truncate(path,stat.size-entry_size);
+        lfh_entries.splice(entry_index,1);
+        lfh_entries.forEach(x => { if(entry_offset < x.offset) x.offset = x.offset - entry_size });
+        offset = offset - entry_size;
+    }
+
     const entries = () => lfh_entries.map(x => x.filename);
 
     const close = async () => {
@@ -58,7 +76,7 @@ export async function open_zip(path: string) {
         target.close();
     }
 
-    return { insert, entries, close }
+    return { entries, insert, remove, close }
 }
 
 async function scan_file(file: Deno.File, stat: Deno.FileInfo): Promise<{ offset: number, lfh_entries: lfh[] }> {

@@ -37,8 +37,8 @@ await zip.close()   // call this at the end
 // edit zip
 const zip = await open_zip('path/to/target.zip');
 console.log(zip.entries())               // ['test.txt']
-await zip.insert(buff2,'filename.jpg'); // push or replace item.
-console.log(zip.entries())               // ['test.txt', 'filename.jpg']
+await zip.insert(buff2,'filename.jpg');  // ['test.txt', 'filename.jpg'] // push or replace file content
+await zip.remove('test.txt');            // ['filename.jpg']
 await zip.close(); // call this at the end
 ```
 
@@ -47,8 +47,3 @@ await zip.close(); // call this at the end
 - No encryption support
 - Optimised for simple use case
 - No Zip64 support
-
-
-### TODO
-- [x] compression
-- [ ] decompression

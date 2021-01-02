@@ -19,8 +19,12 @@ await test.push(new TextEncoder().encode('Hello World'), 'hello.txt');
 await test.close();
 
 // edit file
-const {insert, entries, close} = await open_zip('test copy.zip');
+const {insert, remove, entries, close} = await open_zip('test copy.zip');
 console.log(entries());
-await insert('icon3.png',await Deno.open('icon.png'));
+await insert(await Deno.open('icon.png'),'icon3.png');
+console.log(entries());
+await insert(await Deno.open('icon.png'),'icon.png');
+console.log(entries());
+await remove('icon3.png');
 console.log(entries());
 await close();
