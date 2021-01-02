@@ -1,5 +1,5 @@
 import { append_args, close_args, isDenoFile, lfh_entry } from "./types.ts";
-import { deflate } from "./deflate/mod.ts";
+import { deflate } from "./deflate.ts";
 import { crc32 } from "./crc32.ts";
 
 /**
@@ -35,7 +35,7 @@ export async function append(args:append_args):Promise<{len:number,lfh:Uint8Arra
     gen_lfh();
     zip.writeSync(lfh);
     zip.writeSync(c_content);
-    return { len:lfh.length+c_content.length, lfh};
+    return { len:lfh.byteLength+c_content.byteLength, lfh};
 }
 
 export async function close(args:close_args){
@@ -75,4 +75,5 @@ export async function close(args:close_args){
     }
     const eocd = gen_EOCD();
     zip.writeSync(eocd);
+    return cd_size + 22; // footer size
 }
