@@ -19,7 +19,7 @@ await test.push(new TextEncoder().encode('Hello World'), 'hello.txt');
 await test.close();
 
 // edit file
-const {insert, remove, entries, close} = await open_zip('test copy.zip');
+const {insert, remove, entries, close} = await open_zip('test.zip');
 console.log(entries());
 await insert(await Deno.open('icon.png'),'icon3.png');
 console.log(entries());
